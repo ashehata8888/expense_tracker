@@ -1,4 +1,11 @@
+/* eslint-disable */
+
+
 import { useEffect, useState } from "react";
+
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 function DynamicTable(){
 
   const [TableData,setTableData] = useState([{
@@ -7,7 +14,7 @@ function DynamicTable(){
   const [description,setDescription] = useState('')
   const [amount, setAmount] = useState(0)
   const [realDelete,setRealDelete] = useState(0)
-  const [dayId,setDayId] = useState(0)
+  const [dayId,setDayId] = useState(1)
   const [totalExp , setTotalExp] = useState(0)
   const [budgetRem,setBudgetRem] = useState(0)
 
@@ -45,6 +52,10 @@ const currMonth = (m) =>{
    
 } 
 
+
+
+
+const regex = /^[0-9\b]+$/;
 
 
   console.log("TableData is ...",TableData)
@@ -118,7 +129,7 @@ console.log("totalArrTest",sum); // 6
 
     console.log("test for inx of Delete Obj...",inx)
     return(
-      <button onClick={(e)=>{onclickTrash(inx)}
+      <button className="btn btn-danger" onClick={(e)=>{onclickTrash(inx)}
     }>🗑️</button>
     )
 
@@ -131,12 +142,34 @@ console.log("totalArrTest",sum); // 6
 
   // let dayId = TableData != undefined && TableData.length - 1 
 
+  const addvalidate = ()=>{
+    if(budget != "" && description != "" && amount != 0){
+      addExp()
+    } else {
+      
+      toast("Please complete all entries!!!"
+      // ,
+      // {
+      //   position: "top-right",
+      //   autoClose: 5000,
+      //   hideProgressBar: false,
+      //   closeOnClick: true,
+      //   pauseOnHover: true,
+      //   draggable: true,
+      //   progress: undefined,
+      //   theme: "light",
+      //   }
+        )
+      console.log("Please complete all entries!!!")
+    }
+  }
+
 
   const addExp = ()=>{
     // e.preventDefault()
     // dayId = TableData != undefined && dayId + 1
 
-    setDayId(TableData != undefined && dayId + 1)
+    setDayId(dayId + 1)
 
     let mainObj = {Id: dayId , Description:`${description}`, Amount:amount ,Action:trashIconButton(dayId)}
     let cloneTableData = TableData != undefined && [...TableData]
@@ -206,33 +239,43 @@ console.log("totalArrTest",sum); // 6
 // get table row data
 const tdData =() =>{
    
-     return TableData != undefined && TableData.map((data)=>{
+     return TableData != undefined && TableData.map((data,inx)=>{
+      if(TableData[inx].Id != ''){
        return(
 
-           <tr key={data.Id}>
+           <tr key={data.Id} className="bg-success" >
                 {
+
                    column.map((v)=>{
-                       return <td key={v}>{data[v]}</td>
+                       return <td key={v} className= { amount === 0  ? "bg-info text-info " : "bg-info" }  style={{fontSize:"20pt"}}>{data[v]}</td>
                    })
                 }
            </tr>
 
        )
-     })
+     }
+    }
+    )
 }
 
 
   return (
 <>
-
+<ToastContainer />
 <div className="budget">
-         <span>{currMonth(month)}</span>  Budget <span>
+         <span >{currMonth(month)}</span>  Budget <span>
           <input
-          className="budgetTxt"
+          required
+           className="form-control w-50 p-2 text-center col-md-8 offset-md-3 mt-2"
+          //  className="budgetTxt"
           placeholder='Monthly budget'
-         type='text'
-         onChange={(e)=>setBudget(e.target.value)}
-         value={budget}
+         type="number"
+         onChange={(e)=>{
+
+            setBudget(e.target.value.replace(/\D/g, ''))
+
+        }}
+        value={budget}
          ></input>
          </span>
         </div>
@@ -240,7 +283,9 @@ const tdData =() =>{
     <div className="budget">
         Description <span>
           <input
-          className="budgetTxt"
+          required
+          // className="budgetTxt"
+          className="form-control w-50 p-2 text-center col-md-8 offset-md-3 mt-2"
           placeholder='Enter description'
          type='text'
          onChange={(e)=>setDescription(e.target.value)}
@@ -249,25 +294,29 @@ const tdData =() =>{
          </span>
          Amount <span>
           <input
-          className="budgetTxt"
-          placeholder='Enter description'
+          required
+          // className="budgetTxt"
+          className="form-control w-50 p-2 text-center col-md-8 offset-md-3 mt-2"
+          placeholder='Enter Amount'
           type='number'
           onChange={(e)=>setAmount(e.target.value)}
           value={amount}
          ></input>
          </span>
-         <button onClick={()=>addExp()}>Add Expense</button>
+         <button  
+         className="btn btn-primary mt-4 mb-2"
+         style={{fontSize:"20pt"}} onClick={()=>addvalidate()}>Add Expense</button>
         </div>
 
         <div>
-          <span className="budgetTxt"> Total Expenses : </span> <span className="budgetTxt"> {totalExp}</span>
-          <span className="budgetTxt"> Remain Budget :  </span> <span className="budgetTxt">{budgetRem}</span>
+          <span className=" display-6 text-light"> Total Expenses : </span> <span className=" display-6 text-light px-2 mx-4"> {totalExp}</span>
+          <span className=" display-6 text-light"> Remain Budget :  </span> <span className=" display-6 text-light px-2">{budgetRem}</span>
         </div>
 
 
       <table className="table">
         <thead>
-         <tr>{ThData()}</tr>
+         <tr className="display-6 text-info"  style={{fontSize:"20pt" , marginTop:"20px"}}>{ThData()}</tr>
         </thead>
         <tbody>
         {tdData()}
