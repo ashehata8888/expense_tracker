@@ -35,12 +35,12 @@
   color: #61dafb;
 }
 
-.budget {
+.title {
   color : #61dafb;
   font-size: 20pt;
 }
 
-.budgetTxt {
+.titleTxt {
   font-size: 20pt;
   min-width: 450px;
 }

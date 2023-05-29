@@ -9,16 +9,34 @@ import 'react-toastify/dist/ReactToastify.css';
 function DynamicTable(){
 
   const [TableData,setTableData] = useState([{
-    Id: "" , Description:"", Amount:0 ,Action:""
+    // Id: "" , Description:"", Amount:0 ,Action:""
+    Checked:"", Title:"", Description:"", Create_AT:"",Finished_At:"",Archive_At:"",Actions:""
   }])
-  const [description,setDescription] = useState('')
-  const [amount, setAmount] = useState(0)
-  const [realDelete,setRealDelete] = useState(0)
-  const [dayId,setDayId] = useState(1)
-  const [totalExp , setTotalExp] = useState(0)
-  const [budgetRem,setBudgetRem] = useState(0)
 
-  const [budget,setBudget] = useState("")
+  const [title,settitle] = useState("")
+  const [description,setDescription] = useState('')
+  const [createdAt, setcreatedAt] = useState('')
+  const [finishedAt, setfinishedAt] = useState('')
+  const [archiveAt, setarchiveAt] = useState('')
+  const [checked,setChecked]=useState(false)
+
+  const [realDelete,setRealDelete] = useState(0)
+  const [realEdit,setRealEdit] = useState(0)
+  const [realArchive,setRealArchive] = useState(0)
+
+  const [dayId,setDayId] = useState(1)
+  const [checkboxInx,setCheckboxInx]=useState(0)
+
+
+  const [totalExp , setTotalExp] = useState(0)
+  const [titleRem,settitleRem] = useState(0)
+  const [amount,setAmount]=useState(0)
+
+  const [actions,setAction]=useState('Ahmed')
+
+  
+
+ 
 
   const d = new Date();
 let month = d.getMonth() + 1 ;
@@ -93,31 +111,31 @@ useEffect(()=>{
 
   const newList = clonforDel.filter((item) => item.Id !== realDelete);
   setTableData(newList)
-let totalArr = []
-  let total = 0
-  for(let x = 0 ; x < newList.length ; x++){
-     total = total + TableData != undefined && newList[x]["Amount"]
-     console.log("totalTest", TableData != undefined && newList[x]["Amount"])
-     console.log("testX",x)
-    //  setTotalExp(total)
-    totalArr.push(parseInt(newList[x]["Amount"]))
 
-  }
-  // console.log("totalArrTest",totalArr)
-  const sum = totalArr.reduce((partialSum, a) => partialSum + a, 0);
-console.log("totalArrTest",sum); // 6
-
-  setTotalExp(sum)
-
-  setBudgetRem(budget - sum)
 },[realDelete])
+
+
+// test
+useEffect(()=>{
+
+  const date = new Date().toLocaleString()
+
+    const archiveTodo = (inx)=>{
+      let cloneTable = [...TableData]
+      cloneTable[inx].Archive_At=date
+      setTableData(cloneTable)
+      }
+      realArchive > 0 && realArchive !=  undefined && archiveTodo(realArchive)
+
+
+},[realArchive])
 
 
 
 
   const trashIconButton = (inx)=>{
 
-    // console.log("testCloneDelIn",clonforDel)
+    console.log("testCloneDelIn",inx)
 
     const onclickTrash = (inx) =>{
 
@@ -127,12 +145,88 @@ console.log("totalArrTest",sum); // 6
     
     }
 
-    console.log("test for inx of Delete Obj...",inx)
-    return(
-      <button className="btn btn-danger" onClick={(e)=>{onclickTrash(inx)}
-    }>🗑️</button>
-    )
+    const onclickArchive = (inx) => {
+      setRealArchive(inx)
+     }
 
+
+    const onclickEdit = (inx) => {
+     setRealEdit(inx)
+    }
+
+    console.log("test for inx of Delete Obj...",inx)
+   
+    return (
+  <>
+     <button className="mr-2" style={{marginRight:"8px",background:"none"}} onClick={(e)=>{onclickTrash(inx)}}>🗑️</button>
+     <button className="mr-2" style={{marginRight:"8px",background:"none"}} onClick={(e)=>{onclickEdit(inx)}}>🖊</button>
+     <button className="mr-2" style={{marginRight:"8px",background:"none"}} onClick={(e)=>{onclickArchive(inx)}}>💾</button>
+  </>
+    
+    )
+    
+
+  }
+
+
+  useEffect(()=>{
+
+    const date = new Date().toLocaleString()
+
+    const finishedTodo = (checkboxInx)=>{
+      console.log("testtableData",TableData)
+      console.log("testtableData",checkboxInx)
+      let cloneTable = [...TableData]
+      cloneTable[checkboxInx].Finished_At=date
+      setTableData(cloneTable)
+      }
+      checkboxInx > 0 && checkboxInx !=  undefined && finishedTodo(checkboxInx)
+// trashIconButton(checkboxInx)
+
+  },[checkboxInx])
+  // dayId,
+
+
+  let cloneTable = [...TableData]
+  // console.log("cloneTable",TableData)
+
+
+  const checkBox = (inx)=>{
+
+   
+
+    const date = new Date().toLocaleString()
+    console.log("cloneTable",cloneTable)
+    const handleChange = (e) => {
+
+
+      setChecked(e.target.checked)
+
+  console.log("testonChange",e.target.checked)
+      if(e.target.checked == true){
+        console.log("the check box checked successfully")
+        // setfinishedAt("finished")
+        setCheckboxInx(inx)
+        // finishedTodo(inx)
+     
+  
+  // cloneTable[inx].Finished_At="finished"
+  console.log("cloneTable",inx)
+  setTimeout(()=>console.log("cloneTable",TableData),100)
+
+  // setTableData(cloneTable)
+
+      }
+     
+     
+      setTimeout(()=>console.log("testCheckBoxdate",finishedAt),200)
+    };
+    return (
+      <div>
+      <input type="checkbox" onChange={(e)=>handleChange(e)} />
+    </div>
+      // <input type="checkbox" id={inx}  />
+    )
   }
 
   // if (TableData != undefined && TableData[0].Id == 0 && TableData.length == 2){
@@ -143,8 +237,8 @@ console.log("totalArrTest",sum); // 6
   // let dayId = TableData != undefined && TableData.length - 1 
 
   const addvalidate = ()=>{
-    if(budget != "" && description != "" && amount != 0){
-      addExp()
+    if(title != "" && description != ""){
+      addTodo()
     } else {
       
       toast("Please complete all entries!!!"
@@ -164,14 +258,23 @@ console.log("totalArrTest",sum); // 6
     }
   }
 
+ 
+  const addTodo = ()=>{
+    const date = new Date().toLocaleString()
 
-  const addExp = ()=>{
+
     // e.preventDefault()
     // dayId = TableData != undefined && dayId + 1
 
     setDayId(dayId + 1)
 
-    let mainObj = {Id: dayId , Description:`${description}`, Amount:amount ,Action:trashIconButton(dayId)}
+console.log("testDate",date)
+    setcreatedAt(date)
+
+
+    let mainObj = {
+      Id: dayId ,
+      Checked:checkBox(dayId),Title:`${title}`, Description:`${description}`, Create_AT:`${date}` , Finished_At:`${finishedAt}`,Archive_At:`${archiveAt}`,Actions:trashIconButton(dayId)}
     let cloneTableData = TableData != undefined && [...TableData]
      cloneTableData = TableData != undefined && [...cloneTableData,mainObj]
      
@@ -184,30 +287,10 @@ console.log("totalArrTest",sum); // 6
 
     // const newList = clonforDel.filter((item) => item.Id !== realDelete);
     // setTableData(newList)
-  let totalArr = []
-    let total = 0
-    setTimeout(()=>{
+ 
+  
 
-      for(let x = 0 ; x < cloneTableData.length ; x++){
-        total = total + cloneTableData != undefined && cloneTableData[x]["Amount"]
-        console.log("totalTest", cloneTableData[x]["Amount"])
-        console.log("testX",x)
-       //  setTotalExp(total)
-       totalArr.push(parseInt(cloneTableData[x]["Amount"]))
-      //  totalArr.push(parseInt(amount))
-      console.log("totalArr..",totalArr)
-       
-   //     const sum = totalArr.reduce((partialSum, a) => partialSum + a, 0);
-   // console.log("totalArrTest",sum); // 6
-     }
-     // console.log("totalArrTest",totalArr)
-     const sum = totalArr.reduce((partialSum, a) => partialSum + a, 0);
-   console.log("totalArrTest",sum); // 6
-   
-    setTotalExp(sum)
 
-    setBudgetRem(budget - sum)
-    },0)
    
 
 
@@ -247,7 +330,7 @@ const tdData =() =>{
                 {
 
                    column.map((v)=>{
-                       return <td key={v} className= { amount === 0  ? "bg-info text-info " : "bg-info" }  style={{fontSize:"20pt"}}>{data[v]}</td>
+                       return <td key={v} className="bg-info"  style={{fontSize:"20pt"}}>{data[v]}</td>
                    })
                 }
            </tr>
@@ -262,59 +345,54 @@ const tdData =() =>{
   return (
 <>
 <ToastContainer />
-<div className="budget">
-         <span >{currMonth(month)}</span>  Budget <span>
+<div className="title">
+         {/* <span >{currMonth(month)}</span>  */}
+          Title <span>
           <input
           required
            className="form-control w-50 p-2 text-center col-md-8 offset-md-3 mt-2"
-          //  className="budgetTxt"
-          placeholder='Monthly budget'
-         type="number"
+          //  className="titleTxt"
+          placeholder="please Enter title"
+         type="text"
          onChange={(e)=>{
-
-            setBudget(e.target.value.replace(/\D/g, ''))
-
+            settitle(e.target.value)
         }}
-        value={budget}
+        value={title}
          ></input>
          </span>
         </div>
 
-    <div className="budget">
+    <div className="title">
         Description <span>
           <input
           required
-          // className="budgetTxt"
+          // className="titleTxt"
           className="form-control w-50 p-2 text-center col-md-8 offset-md-3 mt-2"
-          placeholder='Enter description'
+          placeholder='please enter description'
          type='text'
          onChange={(e)=>setDescription(e.target.value)}
          value={description}
          ></input>
          </span>
-         Amount <span>
+
+         {/* Amount <span>
           <input
           required
-          // className="budgetTxt"
+          // className="titleTxt"
           className="form-control w-50 p-2 text-center col-md-8 offset-md-3 mt-2"
           placeholder='Enter Amount'
           type='number'
           onChange={(e)=>setAmount(e.target.value)}
           value={amount}
          ></input>
-         </span>
+         </span> */}
+
          <button  
          className="btn btn-primary mt-4 mb-2"
-         style={{fontSize:"20pt"}} onClick={()=>addvalidate()}>Add Expense</button>
+         style={{fontSize:"20pt"}} onClick={()=>addvalidate()}>Creat new to-do</button>
         </div>
 
-        <div>
-          <span className=" display-6 text-light"> Total Expenses : </span> <span className=" display-6 text-light px-2 mx-4"> {totalExp}</span>
-          <span className=" display-6 text-light"> Remain Budget :  </span> <span className=" display-6 text-light px-2">{budgetRem}</span>
-        </div>
-
-
-      <table className="table">
+       <table className="table">
         <thead>
          <tr className="display-6 text-info"  style={{fontSize:"20pt" , marginTop:"20px"}}>{ThData()}</tr>
         </thead>

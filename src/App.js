@@ -16,7 +16,7 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
-       Expenses Tracker
+       Unifi Todo App
       </header>
         
         
